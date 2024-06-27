@@ -1,0 +1,20 @@
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\bin\Debug\net8.0-windows\Tha Ta Ftiaxei 2.0.exe
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\bin\Debug\net8.0-windows\Tha Ta Ftiaxei 2.0.deps.json
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\bin\Debug\net8.0-windows\Tha Ta Ftiaxei 2.0.runtimeconfig.json
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\bin\Debug\net8.0-windows\Tha Ta Ftiaxei 2.0.dll
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\bin\Debug\net8.0-windows\Tha Ta Ftiaxei 2.0.pdb
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\bin\Debug\net8.0-windows\Newtonsoft.Json.dll
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\Tha Ta Ftiaxei 2.0.vbproj.AssemblyReference.cache
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\Tha_Ta_Ftiaxei_2._0.Form1.resources
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\Tha Ta Ftiaxei 2.0.vbproj.GenerateResource.cache
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\Tha Ta Ftiaxei 2.0.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\Tha Ta Ftiaxei 2.0.AssemblyInfoInputs.cache
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\Tha Ta Ftiaxei 2.0.AssemblyInfo.vb
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\Tha Ta Ftiaxei 2.0.vbproj.CoreCompileInputs.cache
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\Tha Ta F.B6EB5215.Up2Date
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\Tha Ta Ftiaxei 2.0.dll
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\refint\Tha Ta Ftiaxei 2.0.dll
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\Tha Ta Ftiaxei 2.0.pdb
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\Tha Ta Ftiaxei 2.0.genruntimeconfig.cache
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\ref\Tha Ta Ftiaxei 2.0.dll
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\Tha_Ta_Ftiaxei_2._0.Resources.resources
