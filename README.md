@@ -41,6 +41,12 @@ Output should look like this:
 
 ![image](https://github.com/Ioannis-G/tha-ta-ftiaxei/assets/113134133/17b2ba0d-1dad-44ee-97dd-65af3073d038)
 
+## Closing Remarks
+
+This is a personal project, which I have uploaded to GitHub in case anyone finds it handy. As a result, it is natural to assume that I am maintaining it to the level that satisfies me. However, if you do want to report a bug or suggest a feature or fix, you can do so by opening an issue or pull request (subject to review). Thanks for visiting my project! 
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+
