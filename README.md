@@ -43,7 +43,7 @@ Output should look like this:
 
 ## Closing Remarks
 
-This is a personal project, which I have uploaded to GitHub in case anyone finds it handy. As a result, it is natural to assume that I am maintaining it to the level that satisfies me. However, if you do want to report a bug or suggest a feature or fix, you can do so by opening an issue or pull request (subject to review). Thanks for visiting my project! 
+This is a personal project that I've uploaded to GitHub in case anyone finds it useful. As such, I maintain it to a level that satisfies my needs. However, if you wish to report a bug, suggest a feature, or propose a fix, please feel free to do so by opening an issue or submitting a pull request (all of which are subject to review). Thank you for visiting my project!
 
 ## License
 
