@@ -1,6 +1,6 @@
 # Tha Ta Ftiaxei 
 
-«Θα Τα Φτιάξει» (lit. "It'll Fix Them") is a rather simple tool that processes GeoJSON Files, converts geometry coordinates to DMS format and, depending on the geometry type, formats them in a way to assist mainly with TopSky and GroundRadar Map Development.
+Tha ta Ftiaxei is a rather simple tool that processes GeoJSON Files, converts geometry coordinates to DMS format and, depending on the geometry type, formats them in a way to assist mainly with TopSky and GroundRadar Map Development.
 
 ### Prerequisites
 
