@@ -48,11 +48,22 @@ Public Class Form1
         Dim containsPolygonOrMultiPolygon As Boolean = features.Any(Function(feature) feature("geometry")("type").ToString() = "Polygon" OrElse feature("geometry")("type").ToString() = "MultiPolygon")
 
         Dim polygonColor As String = String.Empty
+
         If containsPolygonOrMultiPolygon Then
-            polygonColor = InputBox("Enter the color for the polygons:", "Polygon Color", "yourcolorhere")
-            If String.IsNullOrWhiteSpace(polygonColor) Then
-                MessageBox.Show("No color was entered. Processing will continue without color for polygons.", "Missing Color", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            End If
+            Dim validColorEntered As Boolean = False
+            While Not validColorEntered
+                polygonColor = InputBox("Enter the color for the polygons:", "Polygon Color", "yourcolorhere")
+                If String.IsNullOrEmpty(polygonColor) Then ' Treats both cancellation and empty input similarly
+                    Dim result As DialogResult = MessageBox.Show("Do you want to cancel the operation?", "Cancel?", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation)
+                    If result = DialogResult.Yes Then
+                        Exit Sub ' User confirmed cancellation
+                    Else
+                        ' User chose not to cancel; the loop will prompt for input again.
+                    End If
+                Else
+                    validColorEntered = True
+                End If
+            End While
         End If
 
         Dim supportedTypeFound As Boolean = False
@@ -165,10 +176,15 @@ Public Class Form1
                 Dim formattedCoord As String = ConverttoDMS(lat, lon)
 
                 Dim label As String = String.Empty
-                While String.IsNullOrWhiteSpace(label)
-                    label = InputBox($"Enter the label {formattedCoord}", "Point Label", "yourlabelhere")
-                    If String.IsNullOrWhiteSpace(label) Then
-                        MessageBox.Show("No label was entered. Please try again.", "Label Required", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                While String.IsNullOrEmpty(label)
+                    label = InputBox($"Enter the label for {formattedCoord}", "Point Label", "yourlabelhere")
+                    If String.IsNullOrEmpty(label) Then ' Treats both cancellation and empty input similarly
+                        Dim result As DialogResult = MessageBox.Show("Do you want to cancel the operation?", "Cancel?", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation)
+                        If result = DialogResult.Yes Then
+                            Exit Sub 'User confirmed cancellation
+                        Else
+                            ' User chose not to cancel; the loop will prompt for input again.
+                        End If
                     End If
                 End While
 
