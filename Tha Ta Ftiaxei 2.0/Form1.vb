@@ -3,8 +3,23 @@ Imports System.Windows.Forms
 Imports System.IO
 Imports Newtonsoft.Json.Linq
 Imports System.Globalization
+Imports System.Media
 Public Class Form1
-    'Open GeoJSON File Button Logic
+
+    ' Sound Load Event
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        PlayStartupSound()
+    End Sub
+    Private Sub PlayStartupSound()
+        Try
+            Dim player As New SoundPlayer("startup.wav")
+            player.Play()
+        Catch ex As Exception
+            'Ignore any exceptions
+        End Try
+    End Sub
+
+    ' Open GeoJSON File Button Logic
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Dim openFileDialog As OpenFileDialog = New OpenFileDialog With {
             .Filter = "GeoJSON files (*.geojson)|*.geojson|All files (*.*)|*.*",
@@ -19,7 +34,7 @@ Public Class Form1
         End If
     End Sub
 
-    'Convert to DMS Function
+    ' Convert to DMS Function
     Private Function ConverttoDMS(lat As Double, lon As Double) As String
         Dim latHemisphere As String = If(lat >= 0, "N", "S")
         Dim lonHemisphere As String = If(lon >= 0, "E", "W")
@@ -39,15 +54,19 @@ Public Class Form1
         Return String.Format("{0}{1:00}.{2:00}.{3:00.000}:{4}{5:00}.{6:00}.{7:00.000}", latHemisphere, latDeg, latMin, latSec, lonHemisphere, lonDeg, lonMin, lonSec)
     End Function
 
-    'Process GeoJSON File Method
+    ' Process GeoJSON File Method
     Private Sub ProcessGeoJSONFile(filePath As String)
         Dim jsonContent As String = File.ReadAllText(filePath)
         Dim geoJson As JObject = JObject.Parse(jsonContent)
 
         Dim features As JToken = geoJson("features")
         Dim containsPolygonOrMultiPolygon As Boolean = features.Any(Function(feature) feature("geometry")("type").ToString() = "Polygon" OrElse feature("geometry")("type").ToString() = "MultiPolygon")
+        Dim containsPointOrMultiPoint As Boolean = features.Any(Function(feature) feature("geometry")("type").ToString() = "Point" OrElse feature("geometry")("type").ToString() = "MultiPoint")
 
         Dim polygonColor As String = String.Empty
+        Dim isFirstPolygon As Boolean = True
+        Dim pointMode As String = String.Empty
+        Dim symbolType As String = String.Empty
 
         If containsPolygonOrMultiPolygon Then
             Dim validColorEntered As Boolean = False
@@ -66,8 +85,24 @@ Public Class Form1
             End While
         End If
 
+        If containsPointOrMultiPoint Then
+            pointMode = ShowPointModeSelectionBox()
+            If pointMode Is Nothing Then
+                MessageBox.Show("Operation canceled by the user.", "Operation Canceled", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Exit Sub ' User canceled the operation
+            End If
+
+
+            If pointMode = "Symbol Mode" Then
+                symbolType = InputBox("Enter point symbol type:", "Symbol Type", "yoursymboltypehere")
+                If String.IsNullOrEmpty(symbolType) Then
+                    MessageBox.Show("Symbol type cannot be empty.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Exit Sub ' User did not provide a valid symbol type
+                End If
+            End If
+        End If
+
         Dim supportedTypeFound As Boolean = False
-        Dim isFirstPolygon As Boolean = True
 
         For Each feature In features
             Dim geometry As JToken = feature("geometry")
@@ -95,7 +130,7 @@ Public Class Form1
 
                 Case "Point", "MultiPoint"
                     supportedTypeFound = True
-                    ProcessPoint(coordinates)
+                    ProcessPoint(coordinates, pointMode, type = "MultiPoint", symbolType)
 
                 Case Else
                     ' Unsupported type, do nothing
@@ -104,16 +139,16 @@ Public Class Form1
 
         If Not supportedTypeFound Then
             MessageBox.Show("The selected file does not contain any of the supported geometry types. Please select a valid file.", "Invalid file", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            Button1_Click(Nothing, Nothing) 'Reopen file dialog
+            Button1_Click(Nothing, Nothing) ' Reopen file dialog
         End If
     End Sub
 
-    'Copy to Clipboard Button Logic
+    ' Copy to Clipboard Button Logic
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
         Clipboard.SetText(TextBox1.Text)
     End Sub
 
-    'Polygon Processing Method
+    ' Polygon Processing Method
     Private Sub ProcessPolygon(polygon As JToken)
         For Each ring As JToken In polygon
             For Each coord As JToken In ring.First
@@ -125,7 +160,7 @@ Public Class Form1
         Next
     End Sub
 
-    'LineString Processing Method
+    ' LineString Processing Method
     Private Sub ProcessLineString(lineCoordinates As JToken, Optional isMultiLineString As Boolean = False)
         If isMultiLineString Then
             For Each line As JToken In lineCoordinates
@@ -136,7 +171,7 @@ Public Class Form1
         End If
     End Sub
 
-    'LineString Processing Helper Method
+    ' LineString Processing Helper Method
     Private Sub ProcessSingleLineString(lineCoordinates As JToken)
         For i As Integer = 0 To lineCoordinates.Count - 2
             Dim startCoord As JToken = lineCoordinates(i)
@@ -154,46 +189,88 @@ Public Class Form1
         Next
     End Sub
 
-    'Point Processing Method
-    Private Sub ProcessPoint(point As JToken, Optional isMultiPoint As Boolean = False)
-        If isMultiPoint Then
-            For Each pt As JToken In point.Children()
-                ProcessSinglePoint(pt)
-            Next
+
+    ' Selection Box Method for Point Processing Mode
+    Private Function ShowPointModeSelectionBox() As String
+        Using PointModeSelectionForm As New PointModeSelectionForm()
+            If PointModeSelectionForm.ShowDialog() = DialogResult.OK Then
+                Return PointModeSelectionForm.SelectedMode
+            Else
+                Return Nothing
+            End If
+        End Using
+    End Function
+
+    ' Point Processing Method
+    Private Sub ProcessPoint(point As JToken, mode As String, Optional isMultiPoint As Boolean = False, Optional symboltype As String = "")
+        If mode = "Symbol Mode" Then
+            If isMultiPoint Then
+                For Each pt As JToken In point
+                    ProcessSinglePointAsSymbol(pt, symboltype)
+                Next
+            Else
+                ProcessSinglePointAsSymbol(point, symboltype)
+            End If
         Else
-            ProcessSinglePoint(point)
+            If isMultiPoint Then
+                For Each pt As JToken In point
+                    ProcessSinglePointAsLabel(pt)
+                Next
+            Else
+                ProcessSinglePointAsLabel(point)
+            End If
         End If
     End Sub
 
-    'Point Processing Helper Method
-    Private Sub ProcessSinglePoint(point As JToken)
-        If point.HasValues AndAlso point(0).Type = JTokenType.Array Then
-            ' Assuming the first element of the array is another array with at least two elements (longtitude and latitude).
-            Dim coordinateArray As JArray = point(0)
-            If coordinateArray.Count >= 2 Then
-                Dim lon As Double = coordinateArray(0).ToObject(Of Double)()
-                Dim lat As Double = coordinateArray(1).ToObject(Of Double)()
-                Dim formattedCoord As String = ConverttoDMS(lat, lon)
+    ' Point Processing As Text Label Helper Method
+    Private Sub ProcessSinglePointAsLabel(point As JToken)
+        If point.Type = JTokenType.Array AndAlso point.Count >= 2 Then
+            Dim lon As Double = point(0).ToObject(Of Double)()
+            Dim lat As Double = point(1).ToObject(Of Double)()
+            Dim formattedCoord As String = ConverttoDMS(lat, lon)
 
-                Dim label As String = String.Empty
-                While String.IsNullOrEmpty(label)
-                    label = InputBox($"Enter the label for {formattedCoord}", "Point Label", "yourlabelhere")
-                    If String.IsNullOrEmpty(label) Then ' Treats both cancellation and empty input similarly
-                        Dim result As DialogResult = MessageBox.Show("Do you want to cancel the operation?", "Cancel?", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation)
-                        If result = DialogResult.Yes Then
-                            Exit Sub 'User confirmed cancellation
-                        Else
-                            ' User chose not to cancel; the loop will prompt for input again.
-                        End If
+            Dim label As String = String.Empty
+            While String.IsNullOrEmpty(label)
+                label = InputBox($"Enter the label for {formattedCoord}", "Point Label", "yourlabelhere")
+                If String.IsNullOrEmpty(label) Then ' Treats both cancellation and empty input similarly
+                    Dim result As DialogResult = MessageBox.Show("Do you want to cancel the operation?", "Cancel?", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation)
+                    If result = DialogResult.Yes Then
+                        Exit Sub 'User confirmed cancellation
+                    Else
+                        ' User chose not to cancel; the loop will prompt for input again.
                     End If
-                End While
+                End If
+            End While
 
-                TextBox1.AppendText($"TEXT:{formattedCoord}:{label}" & Environment.NewLine)
-            End If
+            TextBox1.AppendText($"TEXT:{formattedCoord}:{label}" & Environment.NewLine)
         Else
             Throw New InvalidOperationException("No coordinates found or unexpected structure")
         End If
-
     End Sub
 
+    ' Point Processing As Symbol Helper Method
+    Private Sub ProcessSinglePointAsSymbol(point As JToken, symbolType As String)
+        If point.Type = JTokenType.Array AndAlso point.Count >= 2 Then
+            Dim lon As Double = point(0).ToObject(Of Double)()
+            Dim lat As Double = point(1).ToObject(Of Double)()
+            Dim formattedCoord As String = ConverttoDMS(lat, lon)
+
+            Dim symbolName As String = String.Empty
+            While String.IsNullOrEmpty(symbolName)
+                symbolName = InputBox($"Enter the symbol name for {formattedCoord}", "Symbol Name", "yoursymbolnamehere")
+                If String.IsNullOrEmpty(symbolName) Then ' Treats both cancellation and empty input similarly
+                    Dim result As DialogResult = MessageBox.Show("Do you want to cancel the operation?", "Cancel?", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation)
+                    If result = DialogResult.Yes Then
+                        Exit Sub ' User confirmed cancellation
+                    Else
+                        'user chose not to cancel; the loop will prompt for input again.
+                    End If
+                End If
+            End While
+
+            TextBox1.AppendText($"SYMBOL:{symbolType}:{formattedCoord}:{symbolName}" & Environment.NewLine)
+        Else
+            Throw New InvalidOperationException("No coordinates found or unexpected structure")
+        End If
+    End Sub
 End Class

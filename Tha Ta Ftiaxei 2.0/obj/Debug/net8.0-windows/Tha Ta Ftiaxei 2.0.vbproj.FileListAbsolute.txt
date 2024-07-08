@@ -18,3 +18,5 @@ C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8
 C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\Tha Ta Ftiaxei 2.0.genruntimeconfig.cache
 C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\ref\Tha Ta Ftiaxei 2.0.dll
 C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\Tha_Ta_Ftiaxei_2._0.Resources.resources
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\obj\Debug\net8.0-windows\Tha_Ta_Ftiaxei_2._0.PointModeSelectionForm.resources
+C:\Users\emper\source\repos\Tha Ta Ftiaxei 2.0\Tha Ta Ftiaxei 2.0\bin\Debug\net8.0-windows\startup.wav
