@@ -32,7 +32,10 @@ Output should look like this:
 ![image](https://github.com/Ioannis-G/tha-ta-ftiaxei/assets/113134133/956582c6-d738-468d-a47b-0d1a77861d8f)
 
 ### III. "Point" and "MultiPoint" Features
-**Note:** Points are treated by this tool as "TEXT:" labels.
+Points are treated by this tool either as "TEXT:" labels or "SYMBOL:" definitions. If the selected GeoJSON file contains either "Point" or "MultiPoint" features, a selection window opens to choose between the available modes of processing.
+
+**Text Label Mode:**
+
 1. While being processed, the coordinates of each point are converted to Degrees, Minutes, and Seconds format using a function. The user is prompted to enter a label for each point.
 2. After the user provides a label for a point, a string that includes the DMS coordinates and the label of it is formatted and is then outputed to the TextBox.
 3. This process is repeated until all points have been processed.
@@ -41,6 +44,17 @@ Output should look like this:
 
 ![image](https://github.com/Ioannis-G/tha-ta-ftiaxei/assets/113134133/17b2ba0d-1dad-44ee-97dd-65af3073d038)
 
+**Symbol Defintion Mode:**
+ 1. In a similar way to Text Labels, the coordinates of each point are converted to Degrees, Minutes, and Seconds format using a function. The user is prompted to enter the type of symbol for the points defined.
+ 2. The user is prompted to enter the name for each symbol/point (for reference). For each entry, a string that includes the symbol type, the DMS coordinates and the name of it is formatted and is then outputed to the TextBox.
+ 3. This process is repeated until all points have been processed.
+
+Output should look like this: 
+
+![image](https://github.com/Ioannis-G/tha-ta-ftiaxei/assets/113134133/7c9a3dda-e195-4ef6-b185-288d782064ea)
+
+
+**Note:** It is assumed that when you are ready to import them to your maps file, that you will either remove the part with names of each point, keeping just the symbol displayed, or that you will add the necessesary parameters for a symbol label.
 ## Closing Remarks
 
 This is a personal project that I've uploaded to GitHub in case anyone finds it useful. As such, I maintain it to a level that satisfies my needs. However, if you wish to report a bug, suggest a feature, or propose a fix, please feel free to do so by opening an issue or submitting a pull request (all of which are subject to review). Thank you for visiting my project!
