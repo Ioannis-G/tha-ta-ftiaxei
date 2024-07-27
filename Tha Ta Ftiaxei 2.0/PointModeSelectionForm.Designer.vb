@@ -71,7 +71,7 @@ Partial Class PointModeSelectionForm
         MinimizeBox = False
         Name = "PointModeSelectionForm"
         StartPosition = FormStartPosition.CenterScreen
-        Text = "PointModeSelectionFrom"
+        Text = "Select Point Processing Mode"
         ResumeLayout(False)
         PerformLayout()
     End Sub

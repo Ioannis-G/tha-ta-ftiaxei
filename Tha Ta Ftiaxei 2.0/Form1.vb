@@ -51,7 +51,7 @@ Public Class Form1
         Dim latSec As Double = ((lat - latDeg - latMin / 60) * 3600)
         Dim lonSec As Double = ((lon - lonDeg - lonMin / 60) * 3600)
 
-        Return String.Format("{0}{1:00}.{2:00}.{3:00.000}:{4}{5:00}.{6:00}.{7:00.000}", latHemisphere, latDeg, latMin, latSec, lonHemisphere, lonDeg, lonMin, lonSec)
+        Return String.Format("{0}{1:000}.{2:00}.{3:00.000}:{4}{5:000}.{6:00}.{7:00.000}", latHemisphere, latDeg, latMin, latSec, lonHemisphere, lonDeg, lonMin, lonSec)
     End Function
 
     ' Process GeoJSON File Method
@@ -62,11 +62,14 @@ Public Class Form1
         Dim features As JToken = geoJson("features")
         Dim containsPolygonOrMultiPolygon As Boolean = features.Any(Function(feature) feature("geometry")("type").ToString() = "Polygon" OrElse feature("geometry")("type").ToString() = "MultiPolygon")
         Dim containsPointOrMultiPoint As Boolean = features.Any(Function(feature) feature("geometry")("type").ToString() = "Point" OrElse feature("geometry")("type").ToString() = "MultiPoint")
+        Dim containsLineStringOrMultiLineString As Boolean = features.Any(Function(feature) feature("geometry")("type").ToString() = "LineString" OrElse feature("geometry")("type").ToString() = "MultiLineString")
 
         Dim polygonColor As String = String.Empty
         Dim isFirstPolygon As Boolean = True
         Dim pointMode As String = String.Empty
         Dim symbolType As String = String.Empty
+        Dim lineMode As String = String.Empty
+        Dim lineNumber As Integer = 1
 
         If containsPolygonOrMultiPolygon Then
             Dim validColorEntered As Boolean = False
@@ -92,13 +95,20 @@ Public Class Form1
                 Exit Sub ' User canceled the operation
             End If
 
-
             If pointMode = "Symbol Mode" Then
                 symbolType = InputBox("Enter point symbol type:", "Symbol Type", "yoursymboltypehere")
                 If String.IsNullOrEmpty(symbolType) Then
                     MessageBox.Show("Symbol type cannot be empty.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     Exit Sub ' User did not provide a valid symbol type
                 End If
+            End If
+        End If
+
+        If containsLineStringOrMultiLineString Then
+            lineMode = ShowLineModeSelectionBox()
+            If lineMode Is Nothing Then
+                MessageBox.Show("Operation canceled by the user.", "Operation Canceled", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Exit Sub ' User canceled the operation
             End If
         End If
 
@@ -120,13 +130,9 @@ Public Class Form1
                         isFirstPolygon = False
                     End If
 
-                Case "LineString"
+                Case "LineString", "MultiLineString"
                     supportedTypeFound = True
-                    ProcessLineString(coordinates)
-
-                Case "MultiLineString"
-                    supportedTypeFound = True
-                    ProcessLineString(coordinates, True)
+                    ProcessLineString(coordinates, lineMode, lineNumber, type = "MultiLineString")
 
                 Case "Point", "MultiPoint"
                     supportedTypeFound = True
@@ -160,35 +166,62 @@ Public Class Form1
         Next
     End Sub
 
+    ' Selection Box Method for LineString Processing Mode
+    Private Function ShowLineModeSelectionBox() As String
+        Using LineModeSelectionForm As New LineModeSelectionForm()
+            If LineModeSelectionForm.ShowDialog() = DialogResult.OK Then
+                Return LineModeSelectionForm.SelectedMode
+            Else
+                Return Nothing
+            End If
+        End Using
+    End Function
+
     ' LineString Processing Method
-    Private Sub ProcessLineString(lineCoordinates As JToken, Optional isMultiLineString As Boolean = False)
+    Private Sub ProcessLineString(lineCoordinates As JToken, mode As String, ByRef lineNumber As Integer, Optional isMultiLineString As Boolean = False)
         If isMultiLineString Then
             For Each line As JToken In lineCoordinates
-                ProcessSingleLineString(line)
+                If mode = "ESE GND-Net Mode" Then
+                    TextBox1.AppendText($";{lineNumber}-----------------------------------------" & Environment.NewLine)
+                End If
+                ProcessSingleLineString(line, mode)
+                lineNumber += 1
             Next
         Else
-            ProcessSingleLineString(lineCoordinates)
+            If mode = "ESE GND-Net Mode" Then
+                TextBox1.AppendText($";{lineNumber}-----------------------------------------" & Environment.NewLine)
+            End If
+            ProcessSingleLineString(lineCoordinates, mode)
+            lineNumber += 1
         End If
     End Sub
 
     ' LineString Processing Helper Method
-    Private Sub ProcessSingleLineString(lineCoordinates As JToken)
-        For i As Integer = 0 To lineCoordinates.Count - 2
-            Dim startCoord As JToken = lineCoordinates(i)
-            Dim endCoord As JToken = lineCoordinates(i + 1)
+    Private Sub ProcessSingleLineString(lineCoordinates As JToken, mode As String)
+        If mode = "TopSky Line Mode" Then
+            For i As Integer = 0 To lineCoordinates.Count - 2
+                Dim startCoord As JToken = lineCoordinates(i)
+                Dim endCoord As JToken = lineCoordinates(i + 1)
 
-            Dim startLon As Double = startCoord(0).ToObject(Of Double)()
-            Dim startLat As Double = startCoord(1).ToObject(Of Double)()
-            Dim endLon As Double = endCoord(0).ToObject(Of Double)()
-            Dim endLat As Double = endCoord(1).ToObject(Of Double)()
+                Dim startLon As Double = startCoord(0).ToObject(Of Double)()
+                Dim startLat As Double = startCoord(1).ToObject(Of Double)()
+                Dim endLon As Double = endCoord(0).ToObject(Of Double)()
+                Dim endLat As Double = endCoord(1).ToObject(Of Double)()
 
-            Dim formattedStartCoord As String = ConverttoDMS(startLat, startLon)
-            Dim formattedEndCoord As String = ConverttoDMS(endLat, endLon)
+                Dim formattedStartCoord As String = ConverttoDMS(startLat, startLon)
+                Dim formattedEndCoord As String = ConverttoDMS(endLat, endLon)
 
-            TextBox1.AppendText($"LINE:{formattedStartCoord}:{formattedEndCoord}" & Environment.NewLine)
-        Next
+                TextBox1.AppendText($"LINE:{formattedStartCoord}:{formattedEndCoord}" & Environment.NewLine)
+            Next
+        ElseIf mode = "ESE GND-Net Mode" Then
+            For Each coord As JToken In lineCoordinates
+                Dim lon As Double = coord(0).ToObject(Of Double)()
+                Dim lat As Double = coord(1).ToObject(Of Double)()
+                Dim formattedCoord As String = "COORD:" & ConverttoDMS(lat, lon)
+                TextBox1.AppendText(formattedCoord & Environment.NewLine)
+            Next
+        End If
     End Sub
-
 
     ' Selection Box Method for Point Processing Mode
     Private Function ShowPointModeSelectionBox() As String
