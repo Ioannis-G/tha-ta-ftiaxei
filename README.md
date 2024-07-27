@@ -23,6 +23,11 @@ Output should look like this:
 ![image](https://github.com/Ioannis-G/tha-ta-ftiaxei/assets/113134133/f3968d0a-7d0e-4bd8-9adc-893040ce626a)
 
 ### II. "LineString" and "MultiLineString" Features
+
+Lines are treated by this tool either as TopSky / GroundRadar "LINE:" definitions or ESE Ground Network entries. If the selected GeoJSON file contains either "LineString" or "MultiLineString" features, a selection window opens to choose between the available modes of processing.
+
+**TopSky Line Mode:**
+
 1. For both LineString and MultiLineString geometries, the coordinates of a LineString (whether from a single LineString or one within a MultiLineString) are processed and each pair of points is treated as the start and end of a line segment respectively.
 2. For each line segment, the latitude and longitude of the start and end points are converted to Degrees, Minutes, and Seconds format using a function.
 3. This information is then formated as "LINE:" segments, including the DMS-formatted start and end coordinates, and is then outputed to the TextBox.
@@ -30,6 +35,18 @@ Output should look like this:
 Output should look like this:
 
 ![image](https://github.com/Ioannis-G/tha-ta-ftiaxei/assets/113134133/956582c6-d738-468d-a47b-0d1a77861d8f)
+
+**ESE GND-Net Mode:**
+
+**Note:** While unrelated to Topsky or GroundRadar Plugin, I found a feature like this significantly handy for Ground Network development as the process of formating the coordinates from the GeoJSON and creating "TAXI" and "EXIT" definitions is expedited incredibly , provided that the lines have been connected properly (using GIS software e.g. QGIS) as this tool only serves the functionality of converting and formatting.
+
+1. For both LineString and MultiLineString geometries, LineStrings (whether from a single LineString or one within a MultiLineString) are processed and split into coordinate pairs of the points defining them. These coordinate pairs are converted to Degrees, Minutes, and Seconds format using a function.
+2. Each formatted coordinate pair is then outputed to the TextBox with the prefix "COORD:". For MultiLineString geometries, numbered seperators seperate the points of one line from the points of the next.
+3. Each formatted entry output to the TextBox is ready to be highlighted, copied and pasted below its matching "EXIT" or "TAXI" definition of the Ground Network.
+
+Output should look like this:
+
+![image](https://github.com/user-attachments/assets/7da3e8f0-a0c7-449e-adec-26c7c8adc361)
 
 ### III. "Point" and "MultiPoint" Features
 Points are treated by this tool either as "TEXT:" labels or "SYMBOL:" definitions. If the selected GeoJSON file contains either "Point" or "MultiPoint" features, a selection window opens to choose between the available modes of processing.
