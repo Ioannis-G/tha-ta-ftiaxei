@@ -51,7 +51,7 @@ Public Class Form1
         Dim latSec As Double = ((lat - latDeg - latMin / 60) * 3600)
         Dim lonSec As Double = ((lon - lonDeg - lonMin / 60) * 3600)
 
-        Return String.Format("{0}{1:000}.{2:00}.{3:00.000}:{4}{5:000}.{6:00}.{7:00.000}", latHemisphere, latDeg, latMin, latSec, lonHemisphere, lonDeg, lonMin, lonSec)
+        Return String.Format(CultureInfo.InvariantCulture, "{0}{1:000}.{2:00}.{3:00.000}:{4}{5:000}.{6:00}.{7:00.000}", latHemisphere, latDeg, latMin, latSec, lonHemisphere, lonDeg, lonMin, lonSec)
     End Function
 
     ' Process GeoJSON File Method
@@ -99,7 +99,7 @@ Public Class Form1
                 symbolType = InputBox("Enter point symbol type:", "Symbol Type", "yoursymboltypehere")
                 If String.IsNullOrEmpty(symbolType) Then
                     MessageBox.Show("Symbol type cannot be empty.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    Exit Sub ' User did not provide a valid symbol type
+                    Exit Sub ' User did not provide a valid symbol type 
                 End If
             End If
         End If
@@ -151,7 +151,7 @@ Public Class Form1
 
     ' Copy to Clipboard Button Logic
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        Clipboard.SetText(TextBox1.Text)
+            Clipboard.SetText(TextBox1.Text)
     End Sub
 
     ' Polygon Processing Method
