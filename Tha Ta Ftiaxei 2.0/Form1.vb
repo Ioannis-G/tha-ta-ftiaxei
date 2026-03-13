@@ -151,7 +151,9 @@ Public Class Form1
 
     ' Copy to Clipboard Button Logic
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        If Not String.IsNullOrWhiteSpace(TextBox1.Text) Then
             Clipboard.SetText(TextBox1.Text)
+        End If
     End Sub
 
     ' Polygon Processing Method
