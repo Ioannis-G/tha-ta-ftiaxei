@@ -4,7 +4,7 @@ Tha ta Ftiaxei is a rather simple tool that processes GeoJSON Files, converts ge
 
 ### Prerequisites
 
-1. .NET 8.0 (https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+1. .NET 10.0 (https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 2. Compatible GeoJSON File(s). Supported features are "Polygon", "MultiPolygon", "LineString", "MultiLineString", "Point" and "MultiPoint".
 3. Optionally, GIS software to create the GeoJSON files needed for map development.
 
@@ -78,6 +78,4 @@ This is a personal project that I've uploaded to GitHub in case anyone finds it 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
