@@ -51,7 +51,7 @@ Public Class Form1
         Dim latSec As Double = ((lat - latDeg - latMin / 60) * 3600)
         Dim lonSec As Double = ((lon - lonDeg - lonMin / 60) * 3600)
 
-        Return String.Format("{0}{1:000}.{2:00}.{3:00.000}:{4}{5:000}.{6:00}.{7:00.000}", latHemisphere, latDeg, latMin, latSec, lonHemisphere, lonDeg, lonMin, lonSec)
+        Return String.Format(CultureInfo.InvariantCulture, "{0}{1:000}.{2:00}.{3:00.000}:{4}{5:000}.{6:00}.{7:00.000}", latHemisphere, latDeg, latMin, latSec, lonHemisphere, lonDeg, lonMin, lonSec)
     End Function
 
     ' Process GeoJSON File Method
@@ -99,7 +99,7 @@ Public Class Form1
                 symbolType = InputBox("Enter point symbol type:", "Symbol Type", "yoursymboltypehere")
                 If String.IsNullOrEmpty(symbolType) Then
                     MessageBox.Show("Symbol type cannot be empty.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    Exit Sub ' User did not provide a valid symbol type
+                    Exit Sub ' User did not provide a valid symbol type 
                 End If
             End If
         End If
@@ -126,7 +126,7 @@ Public Class Form1
                         If Not isFirstPolygon Then
                             TextBox1.AppendText("COLOR:" & polygonColor & Environment.NewLine)
                         End If
-                        ProcessPolygon(coordinates)
+                        ProcessPolygon(coordinates, type = "MultiPolygon")
                         isFirstPolygon = False
                     End If
 
@@ -151,19 +151,34 @@ Public Class Form1
 
     ' Copy to Clipboard Button Logic
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        Clipboard.SetText(TextBox1.Text)
+        If Not String.IsNullOrWhiteSpace(TextBox1.Text) Then
+            Clipboard.SetText(TextBox1.Text)
+        End If
     End Sub
 
     ' Polygon Processing Method
-    Private Sub ProcessPolygon(polygon As JToken)
-        For Each ring As JToken In polygon
-            For Each coord As JToken In ring.First
-                Dim lon As Double = coord(0).ToObject(Of Double)()
-                Dim lat As Double = coord(1).ToObject(Of Double)()
-                Dim formattedCoord As String = "COORD:" & ConverttoDMS(lat, lon)
-                TextBox1.AppendText(formattedCoord & Environment.NewLine)
+    Private Sub ProcessPolygon(polygonCoordinates As JToken, isMultiPolygon As Boolean)
+        If isMultiPolygon Then
+            For Each singlePolygon As JToken In polygonCoordinates
+                If singlePolygon.First IsNot Nothing Then
+                    For Each coord As JToken In singlePolygon.First
+                        Dim lon As Double = coord(0).ToObject(Of Double)()
+                        Dim lat As Double = coord(1).ToObject(Of Double)()
+                        Dim formattedCoord As String = "COORD:" & ConverttoDMS(lat, lon)
+                        TextBox1.AppendText(formattedCoord & Environment.NewLine)
+                    Next
+                End If
             Next
-        Next
+        Else
+            If polygonCoordinates.First IsNot Nothing Then
+                For Each coord As JToken In polygonCoordinates.First
+                    Dim lon As Double = coord(0).ToObject(Of Double)()
+                    Dim lat As Double = coord(1).ToObject(Of Double)()
+                    Dim formattedCoord As String = "COORD:" & ConverttoDMS(lat, lon)
+                    TextBox1.AppendText(formattedCoord & Environment.NewLine)
+                Next
+            End If
+        End If
     End Sub
 
     ' Selection Box Method for LineString Processing Mode
@@ -182,14 +197,14 @@ Public Class Form1
         If isMultiLineString Then
             For Each line As JToken In lineCoordinates
                 If mode = "ESE GND-Net Mode" Then
-                    TextBox1.AppendText($";{lineNumber}-----------------------------------------" & Environment.NewLine)
+                    TextBox1.AppendText($";{lineNumber}---------------------------------------" & Environment.NewLine)
                 End If
                 ProcessSingleLineString(line, mode)
                 lineNumber += 1
             Next
         Else
             If mode = "ESE GND-Net Mode" Then
-                TextBox1.AppendText($";{lineNumber}-----------------------------------------" & Environment.NewLine)
+                TextBox1.AppendText($";{lineNumber}---------------------------------------" & Environment.NewLine)
             End If
             ProcessSingleLineString(lineCoordinates, mode)
             lineNumber += 1
